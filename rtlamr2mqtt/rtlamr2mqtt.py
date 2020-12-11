@@ -15,11 +15,16 @@ if not os.environ.get("MQTT_TOPIC"):
     print ("[*] Error, please specify MQTT_TOPIC.")
     sys.exit(1)
 
+if not os.environ.get("METER_ID"):
+    print ("[*] Error, please specify METER_ID.")
+    sys.exit(1)
+
 client.connect(os.environ.get("MQTT_HOST"))
 client.loop_start()
 
 # Once you've determined your list of IDs you need to monitor, you can specify them here
 IDS_TO_MONITOR = []
+IDS_TO_MONITOR.append(os.environ.get("METER_ID"))
 
 LAST = {}
 
