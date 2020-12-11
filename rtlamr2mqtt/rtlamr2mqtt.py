@@ -34,6 +34,7 @@ if __name__ == "__main__":
             for line in iter(sys.stdin.readline, ''):
                 try:
                     resp = json.loads(line.rstrip())
+                    print (line)
                 except Exception as e:
                     print ("[*] Error, invalid JSON from rtlasm, did you specify JSON output format?")
                 id = resp.get("Message").get("EndpointID")
