@@ -24,7 +24,7 @@ client.loop_start()
 
 # Once you've determined your list of IDs you need to monitor, you can specify them here
 IDS_TO_MONITOR = []
-IDS_TO_MONITOR.append(os.environ.get("METER_ID"))
+IDS_TO_MONITOR.append(int(os.environ.get("METER_ID")))
 
 LAST = {}
 
