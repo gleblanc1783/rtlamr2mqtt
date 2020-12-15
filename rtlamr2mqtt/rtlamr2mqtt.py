@@ -29,11 +29,13 @@ IDS_TO_MONITOR.append(int(os.environ.get("METER_ID")))
 
 LAST = {}
 
-day_total = 0
+LAST_PRICE = 0.177378741
 
+day_total = 0
+hours = 0
 if __name__ == "__main__":
     try:
-        TODAY = datetime.datetime.today().date()
+        TODAY = datetime.datetime.today()
         while True:
             for line in iter(sys.stdin.readline, ''):
                 try:
@@ -49,15 +51,21 @@ if __name__ == "__main__":
                         diffo = { "diff": diff }
                         if diff != 0:
                             c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(diffo))
-                            if TODAY == datetime.datetime.today().date():
+                            if TODAY.date() == datetime.datetime.today().date():
+                                hours = (datetime.datetime.now() - TODAY).total_seconds() / 3600
                                 day_total += diff
                                 difft = {"difft": day_total}
                                 c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
+                                diffc = {"diffc": (day_total/hours)*LAST_PRICE}
+                                c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(diffc))
                             else:
+                                hours = 0
                                 TODAY = datetime.datetime.today().date()
                                 day_total = 0
                                 difft = {"difft": day_total}
                                 c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
+                                diffc = {"diffc": (day_total/hours)*LAST_PRICE}
+                                c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(diffc))
                     else:
                         LAST[id] = resp.get("Message").get("Consumption")
                         print ("{0} began {1} dcW".format(id, resp.get("Message").get("Consumption")))
