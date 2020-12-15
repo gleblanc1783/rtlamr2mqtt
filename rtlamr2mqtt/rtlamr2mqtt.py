@@ -56,7 +56,7 @@ if __name__ == "__main__":
                                 day_total += diff
                                 difft = {"difft": day_total}
                                 c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
-                                diffc = {"diffc": (day_total/hours)*LAST_PRICE}
+                                diffc = {"diffc": ((day_total*hours)/1000)*LAST_PRICE}
                                 c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(diffc))
                             else:
                                 hours = 0
