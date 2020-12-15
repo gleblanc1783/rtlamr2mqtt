@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import datetime
 
 import paho.mqtt.client as mqtt
 
@@ -28,13 +29,15 @@ IDS_TO_MONITOR.append(int(os.environ.get("METER_ID")))
 
 LAST = {}
 
+day_total = 0
+
 if __name__ == "__main__":
     try:
+        TODAY = datetime.datetime.today().date()
         while True:
             for line in iter(sys.stdin.readline, ''):
                 try:
                     resp = json.loads(line.rstrip())
-                    print (line)
                 except Exception as e:
                     print ("[*] Error, invalid JSON from rtlasm, did you specify JSON output format?")
                 id = resp.get("Message").get("EndpointID")
@@ -46,6 +49,15 @@ if __name__ == "__main__":
                         diffo = { "diff": diff }
                         if diff != 0:
                             c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(diffo))
+                            if TODAY == datetime.today().date():
+                                day_total += diff
+                                difft = {"difft": day_total}
+                                c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
+                            else:
+                                TODAY = datetime.today().date()
+                                day_total = 0
+                                difft = {"difft": day_total}
+                                c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
                     else:
                         LAST[id] = resp.get("Message").get("Consumption")
                         print ("{0} began {1} dcW".format(id, resp.get("Message").get("Consumption")))
