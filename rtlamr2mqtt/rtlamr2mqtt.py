@@ -49,12 +49,12 @@ if __name__ == "__main__":
                         diffo = { "diff": diff }
                         if diff != 0:
                             c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(diffo))
-                            if TODAY == datetime.today().date():
+                            if TODAY == datetime.datetime.today().date():
                                 day_total += diff
                                 difft = {"difft": day_total}
                                 c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
                             else:
-                                TODAY = datetime.today().date()
+                                TODAY = datetime.datetime.today().date()
                                 day_total = 0
                                 difft = {"difft": day_total}
                                 c = client.publish(os.environ.get("MQTT_TOPIC"), json.dumps(difft))
